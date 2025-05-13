@@ -1,9 +1,18 @@
 
 import React from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { LogIn, LogOut, User } from 'lucide-react';
 
 const Layout = () => {
   const location = useLocation();
+  const { isAuthenticated, user, logout } = useAuth();
+  const navigate = useNavigate();
+  
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
+  };
   
   return (
     <div>
@@ -38,6 +47,24 @@ const Layout = () => {
             >
               Profile
             </Link>
+            
+            {isAuthenticated ? (
+              <button 
+                onClick={handleLogout}
+                className="nav-link flex items-center gap-1"
+              >
+                <LogOut size={16} />
+                <span>Logout</span>
+              </button>
+            ) : (
+              <Link 
+                to="/login" 
+                className={`nav-link ${location.pathname === '/login' ? 'active' : ''} flex items-center gap-1`}
+              >
+                <LogIn size={16} />
+                <span>Login</span>
+              </Link>
+            )}
           </div>
         </nav>
       </header>
