@@ -1,13 +1,41 @@
 
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import { getProfile, login, register, logout } from '../api/ecowattAPI';
 
-const AuthContext = createContext();
+// Define types for our context
+type User = {
+  id?: number;
+  username?: string;
+  email?: string;
+  points?: number;
+  [key: string]: any;
+};
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+type AuthContextType = {
+  isAuthenticated: boolean;
+  user: User | null;
+  isLoading: boolean;
+  error: string | null;
+  login: (email: string, password: string) => Promise<any>;
+  register: (username: string, email: string, password: string) => Promise<any>;
+  logout: () => Promise<void>;
+};
+
+// Create context with default values
+const AuthContext = createContext<AuthContextType>({
+  isAuthenticated: false,
+  user: null,
+  isLoading: true,
+  error: null,
+  login: async () => ({}),
+  register: async () => ({}),
+  logout: async () => {},
+});
+
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Check if user is already logged in
@@ -30,27 +58,27 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const loginUser = async (email, password) => {
+  const loginUser = async (email: string, password: string) => {
     setError(null);
     try {
       const data = await login(email, password);
       localStorage.setItem('ecowattToken', data.token);
       setUser(data.user);
       return data;
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message || 'Failed to login');
       throw err;
     }
   };
 
-  const registerUser = async (username, email, password) => {
+  const registerUser = async (username: string, email: string, password: string) => {
     setError(null);
     try {
       const data = await register(username, email, password);
       localStorage.setItem('ecowattToken', data.token);
       setUser(data.user);
       return data;
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message || 'Failed to register');
       throw err;
     }
