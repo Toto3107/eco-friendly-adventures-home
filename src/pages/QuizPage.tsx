@@ -1,160 +1,183 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { getQuizQuestions, submitQuizAnswer } from '../api/ecowattAPI';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 
-type Question = {
+interface QuizQuestion {
   id: number;
   text: string;
   options: string[];
-  correctAnswer: number;
-};
+}
+
+interface QuizResponse {
+  questions: QuizQuestion[];
+}
 
 const QuizPage = () => {
+  const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [score, setScore] = useState(0);
-  const [showResult, setShowResult] = useState(false);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
-  const [showFeedback, setShowFeedback] = useState(false);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { isAuthenticated } = useAuth();
+  const { toast } = useToast();
 
-  const questions: Question[] = [
-    {
-      id: 1,
-      text: "Which of these actions saves the most water?",
-      options: ["Taking shorter showers", "Using a dishwasher instead of washing by hand", "Turning off the tap while brushing teeth", "Washing clothes in cold water"],
-      correctAnswer: 1
-    },
-    {
-      id: 2,
-      text: "What is the most effective way to reduce your carbon footprint?",
-      options: ["Using public transportation", "Eating less meat", "Recycling regularly", "Using energy-efficient appliances"],
-      correctAnswer: 1
-    },
-    {
-      id: 3,
-      text: "Which material takes the longest to decompose in a landfill?",
-      options: ["Paper", "Aluminum cans", "Plastic bottles", "Glass bottles"],
-      correctAnswer: 2
-    },
-    {
-      id: 4,
-      text: "What percentage of the Earth's surface is covered by water?",
-      options: ["50%", "60%", "70%", "80%"],
-      correctAnswer: 2
-    },
-    {
-      id: 5,
-      text: "Which of these is NOT a renewable resource?",
-      options: ["Solar energy", "Wind power", "Natural gas", "Hydroelectric power"],
-      correctAnswer: 2
-    }
-  ];
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      if (isAuthenticated) {
+        try {
+          setIsLoading(true);
+          const data = await getQuizQuestions() as QuizResponse;
+          setQuestions(data.questions);
+        } catch (error) {
+          console.error('Error fetching quiz questions:', error);
+          toast({
+            title: 'Error',
+            description: 'Failed to load quiz questions. Please try again later.',
+            variant: 'destructive',
+          });
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchQuestions();
+  }, [isAuthenticated, toast]);
 
   const currentQuestion = questions[currentQuestionIndex];
 
   const handleOptionSelect = (optionIndex: number) => {
     setSelectedOption(optionIndex);
-    setShowFeedback(true);
-    
-    if (optionIndex === currentQuestion.correctAnswer) {
-      setScore(score + 1);
-    }
-    
-    setTimeout(() => {
-      setShowFeedback(false);
-      setSelectedOption(null);
-      
-      if (currentQuestionIndex < questions.length - 1) {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
-      } else {
-        setShowResult(true);
-      }
-    }, 1500);
+    setIsCorrect(null); // Reset the correction status
   };
 
-  const resetQuiz = () => {
-    setCurrentQuestionIndex(0);
-    setScore(0);
-    setShowResult(false);
-    setSelectedOption(null);
-    setShowFeedback(false);
+  const handleSubmitAnswer = async () => {
+    if (selectedOption === null) {
+      toast({
+        title: 'Selection required',
+        description: 'Please select an answer before submitting.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      const response = await submitQuizAnswer(currentQuestion.id, selectedOption);
+      setIsCorrect(response.is_correct);
+
+      if (response.is_correct) {
+        toast({
+          title: 'Correct!',
+          description: `You earned ${response.points_earned} points!`,
+          variant: 'default',
+        });
+
+        if (response.new_badges && response.new_badges.length > 0) {
+          toast({
+            title: 'New Badge Earned!',
+            description: `You've earned the ${response.new_badges[0].name} badge!`,
+            variant: 'default',
+          });
+        }
+      } else {
+        toast({
+          title: 'Incorrect',
+          description: 'Try again with another question!',
+          variant: 'destructive',
+        });
+      }
+
+      // Move to the next question after a short delay
+      setTimeout(() => {
+        // Move to next question if available, otherwise cycle back to the first question
+        if (currentQuestionIndex < questions.length - 1) {
+          setCurrentQuestionIndex(prevIndex => prevIndex + 1);
+        } else {
+          setCurrentQuestionIndex(0);
+        }
+        setSelectedOption(null);
+        setIsCorrect(null);
+      }, 1500);
+    } catch (error) {
+      console.error('Error submitting answer:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to submit your answer. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-8">
+        <h1 className="text-2xl font-bold mb-6 text-center">Environmental Quiz</h1>
+        <div className="flex justify-center items-center h-64">
+          <p>Loading quiz questions...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!questions.length) {
+    return (
+      <div className="container mx-auto p-8">
+        <h1 className="text-2xl font-bold mb-6 text-center">Environmental Quiz</h1>
+        <Card className="p-6 text-center">
+          <p>No quiz questions available at the moment. Please check back later!</p>
+        </Card>
+      </div>
+    );
+  }
 
   return (
-    <div className="container fade-in" style={{ padding: '2rem 0' }}>
-      <h2 style={{ fontSize: '2rem', color: 'var(--primary)', textAlign: 'center', marginBottom: '2rem' }}>
-        Environmental Quiz
-      </h2>
-      
-      <div style={{ maxWidth: '700px', margin: '0 auto' }}>
-        {!showResult ? (
-          <div className="card" style={{ padding: '2rem' }}>
-            <div style={{ marginBottom: '1.5rem' }}>
-              <span style={{ backgroundColor: 'var(--soft-green)', padding: '0.5rem 1rem', borderRadius: '20px' }}>
-                Question {currentQuestionIndex + 1}/{questions.length}
-              </span>
-            </div>
-            
-            <h3 style={{ fontSize: '1.25rem', marginBottom: '1.5rem' }}>
-              {currentQuestion.text}
-            </h3>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {currentQuestion.options.map((option, index) => (
-                <button
-                  key={index}
-                  onClick={() => !showFeedback && handleOptionSelect(index)}
-                  disabled={showFeedback}
-                  style={{
-                    padding: '1rem',
-                    borderRadius: '10px',
-                    border: 'none',
-                    textAlign: 'left',
-                    cursor: showFeedback ? 'default' : 'pointer',
-                    backgroundColor: showFeedback
-                      ? index === currentQuestion.correctAnswer
-                        ? '#D1F0C2'
-                        : index === selectedOption
-                          ? '#FFDEE2'
-                          : 'white'
-                      : 'white',
-                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-                    transition: 'all 0.3s ease'
-                  }}
-                >
-                  {option}
-                  {showFeedback && index === currentQuestion.correctAnswer && (
-                    <span style={{ marginLeft: '1rem', color: 'var(--primary)' }}>✓</span>
-                  )}
-                  {showFeedback && index === selectedOption && index !== currentQuestion.correctAnswer && (
-                    <span style={{ marginLeft: '1rem', color: 'red' }}>✕</span>
-                  )}
-                </button>
-              ))}
-            </div>
+    <div className="container mx-auto p-8">
+      <h1 className="text-2xl font-bold mb-6 text-center">Environmental Quiz</h1>
+      <div className="w-full max-w-3xl mx-auto">
+        <Card className="p-6">
+          <div className="mb-4 text-sm text-gray-500">
+            Question {currentQuestionIndex + 1} of {questions.length}
           </div>
-        ) : (
-          <div className="card" style={{ padding: '2rem', textAlign: 'center' }}>
-            <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Quiz Complete!</h3>
-            <p style={{ fontSize: '2.5rem', color: 'var(--primary)', marginBottom: '1.5rem' }}>
-              Your Score: {score}/{questions.length}
-            </p>
-            
-            <p style={{ marginBottom: '2rem' }}>
-              {score === questions.length
-                ? "Perfect score! You're an eco-expert! 🌍"
-                : score >= questions.length / 2
-                  ? "Great job! You know your environmental facts! 🌱"
-                  : "Keep learning about environmental issues! 💚"}
-            </p>
-            
-            <button
-              onClick={resetQuiz}
-              className="button"
-              style={{ display: 'inline-block' }}
+          
+          <h2 className="text-xl font-semibold mb-6">{currentQuestion.text}</h2>
+          
+          <div className="space-y-3">
+            {currentQuestion.options.map((option, index) => (
+              <div
+                key={index}
+                className={`p-4 border rounded-lg cursor-pointer transition-colors ${
+                  selectedOption === index 
+                    ? isCorrect === null 
+                      ? 'bg-primary text-white'
+                      : isCorrect 
+                        ? 'bg-green-500 text-white' 
+                        : 'bg-red-500 text-white'
+                    : 'hover:bg-gray-100'
+                }`}
+                onClick={() => !isSubmitting && isCorrect === null && handleOptionSelect(index)}
+              >
+                {option}
+              </div>
+            ))}
+          </div>
+          
+          <div className="mt-8 flex justify-end">
+            <Button
+              onClick={handleSubmitAnswer}
+              disabled={selectedOption === null || isSubmitting || isCorrect !== null}
             >
-              Take Quiz Again
-            </button>
+              {isSubmitting ? 'Submitting...' : 'Submit Answer'}
+            </Button>
           </div>
-        )}
+        </Card>
       </div>
     </div>
   );
