@@ -1,27 +1,140 @@
+
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ecowatt - Build a Greener Future Together</title>
-    <meta name="description" content="Join Ecowatt to learn eco-friendly habits, take environmental quizzes, and earn rewards for sustainable living." />
-    <meta name="author" content="Lovable" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecowatt - Build a Greener Future</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <span class="nav-icon">🌿</span>
+                <span class="nav-title">Ecowatt</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#tasks" class="nav-link">Tasks</a></li>
+                <li><a href="#quiz" class="nav-link">Quiz</a></li>
+                <li><a href="#rewards" class="nav-link">Rewards</a></li>
+                <li><a href="#profile" class="nav-link">Profile</a></li>
+            </ul>
+        </div>
+    </nav>
 
-    <meta property="og:title" content="Ecowatt - Build a Greener Future Together" />
-    <meta property="og:description" content="Join Ecowatt to learn eco-friendly habits, take environmental quizzes, and earn rewards for sustainable living." />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <main class="main-content">
+        <!-- Home Page -->
+        <section id="home" class="page active">
+            <div class="hero-section">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <h1>Welcome to Ecowatt</h1>
+                        <h2>Let's build a greener future together!</h2>
+                        <p>Join our community of eco-warriors making a positive impact on the planet through daily sustainable actions.</p>
+                        <div class="hero-buttons">
+                            <button class="btn btn-primary" onclick="showPage('tasks')">Start Today's Tasks</button>
+                            <button class="btn btn-secondary" onclick="showPage('quiz')">Take a Quiz</button>
+                        </div>
+                    </div>
+                    <div class="hero-image">
+                        <img src="https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=500&h=500&fit=crop" alt="Green leaves">
+                    </div>
+                </div>
+                
+                <div class="features">
+                    <div class="feature-card">
+                        <div class="feature-icon">🌱</div>
+                        <h3>Daily Eco Tasks</h3>
+                        <p>Build sustainable habits with simple daily actions that benefit our planet.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🧠</div>
+                        <h3>Fun Eco Quizzes</h3>
+                        <p>Test your environmental knowledge and learn new facts about sustainability.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🏆</div>
+                        <h3>Earn Rewards</h3>
+                        <p>Get recognized for your efforts with points and special achievement badges.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@lovable_dev" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-  </head>
+        <!-- Tasks Page -->
+        <section id="tasks" class="page">
+            <div class="container">
+                <h1>Daily Eco-Friendly Tasks</h1>
+                <div class="tasks-container" id="tasksContainer">
+                    <!-- Tasks will be loaded here -->
+                </div>
+            </div>
+        </section>
 
-  <body>
-    <div id="root"></div>
-    <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
-    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+        <!-- Quiz Page -->
+        <section id="quiz" class="page">
+            <div class="container">
+                <h1>Environmental Quiz</h1>
+                <div class="quiz-container" id="quizContainer">
+                    <!-- Quiz will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Rewards Page -->
+        <section id="rewards" class="page">
+            <div class="container">
+                <h1>Your Rewards</h1>
+                <div class="progress-section">
+                    <h2>Your Progress</h2>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p id="progressText">0 points</p>
+                </div>
+                <div class="badges-grid" id="badgesGrid">
+                    <!-- Badges will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Profile Page -->
+        <section id="profile" class="page">
+            <div class="container">
+                <h1>Your Profile</h1>
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="profile-avatar">🌿</div>
+                        <h2 id="profileName">Eco Warrior</h2>
+                        <button class="btn btn-outline" onclick="editProfile()">Edit Name</button>
+                    </div>
+                    
+                    <div class="profile-stats">
+                        <div class="stat-card">
+                            <div class="stat-label">Points Earned</div>
+                            <div class="stat-value" id="profilePoints">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Tasks Completed</div>
+                            <div class="stat-value" id="profileTasks">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Badges Earned</div>
+                            <div class="stat-value" id="profileBadges">0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="eco-tip">
+                        <h3>💡 Eco Tip of the Day</h3>
+                        <p>Replace single-use items with reusable alternatives to reduce waste. Try reusable grocery bags, water bottles, and food containers!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
 </html>
