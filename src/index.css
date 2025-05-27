@@ -1,0 +1,444 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Custom Ecowatt Color Palette */
+    --soft-green: #D1F0C2;
+    --light-green: #E8F5E1;
+    --soft-blue: #D3E4FD;
+    --soft-yellow: #FEF7CD;
+    --soft-orange: #FEC6A1;
+    --soft-pink: #FFDEE2;
+    --soft-gray: #F1F0FB;
+    
+    /* Standard UI colors */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 142 76% 36%;
+    --primary-foreground: 355.7 100% 97.3%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 142 70% 96%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 142 76% 36%;
+    --radius: 1rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-[var(--light-green)] text-foreground font-sans;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* Custom Styles for Ecowatt */
+
+.eco-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.eco-card {
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.eco-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+.eco-button {
+  background-color: var(--soft-green);
+  border: none;
+  border-radius: 12px;
+  color: #1f7247;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.2s ease;
+}
+
+.eco-button:hover {
+  background-color: #bae5a3;
+  transform: translateY(-2px);
+}
+
+.eco-button.secondary {
+  background-color: var(--soft-blue);
+  color: #2c5282;
+}
+
+.eco-button.secondary:hover {
+  background-color: #b5d3f7;
+}
+
+.eco-input {
+  background-color: white;
+  border: 2px solid var(--soft-gray);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  width: 100%;
+  transition: border-color 0.2s ease;
+}
+
+.eco-input:focus {
+  border-color: var(--soft-green);
+  outline: none;
+}
+
+.eco-header {
+  background-color: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  padding: 1rem 0;
+}
+
+.eco-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.eco-logo {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f7247;
+}
+
+.logo-icon {
+  margin-right: 0.5rem;
+  font-size: 1.8rem;
+}
+
+.eco-nav-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.eco-nav-link {
+  color: #4b5563;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+  position: relative;
+}
+
+.eco-nav-link:hover {
+  color: #1f7247;
+}
+
+.eco-nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+  height: 3px;
+  width: 0;
+  background-color: var(--soft-green);
+  transition: width 0.3s ease;
+}
+
+.eco-nav-link:hover::after {
+  width: 100%;
+}
+
+.eco-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4rem 0;
+}
+
+.eco-hero-content {
+  max-width: 600px;
+}
+
+.eco-section {
+  padding: 3rem 0;
+}
+
+.eco-section-title {
+  color: #1f7247;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.eco-task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.eco-task-item {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 1rem 1.5rem;
+}
+
+.eco-task-checkbox {
+  appearance: none;
+  background-color: white;
+  border: 2px solid #d1d5db;
+  border-radius: 6px;
+  cursor: pointer;
+  height: 20px;
+  margin-right: 1rem;
+  position: relative;
+  width: 20px;
+}
+
+.eco-task-checkbox:checked {
+  background-color: #4ade80;
+  border-color: #4ade80;
+}
+
+.eco-task-checkbox:checked::after {
+  content: '✓';
+  color: white;
+  display: block;
+  font-size: 12px;
+  font-weight: bold;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.eco-task-text {
+  flex: 1;
+  font-size: 1rem;
+}
+
+.eco-task-item.completed .eco-task-text {
+  color: #9ca3af;
+  text-decoration: line-through;
+}
+
+.eco-quiz-container {
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin: 0 auto;
+  max-width: 800px;
+  padding: 2rem;
+}
+
+.eco-quiz-question {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.eco-quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.eco-quiz-option {
+  background-color: var(--light-green);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  padding: 1rem;
+  transition: all 0.2s ease;
+}
+
+.eco-quiz-option:hover {
+  background-color: var(--soft-green);
+}
+
+.eco-quiz-option.correct {
+  background-color: #d1fae5;
+  border-color: #34d399;
+}
+
+.eco-quiz-option.incorrect {
+  background-color: #fee2e2;
+  border-color: #f87171;
+}
+
+.eco-badges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.eco-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.eco-badge-icon {
+  background-color: var(--soft-yellow);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80px;
+  width: 80px;
+  margin-bottom: 1rem;
+}
+
+.eco-badge-icon.locked {
+  background-color: var(--soft-gray);
+  opacity: 0.5;
+}
+
+.eco-badge-title {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.eco-badge-description {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.eco-profile-card {
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin: 0 auto;
+  max-width: 600px;
+  padding: 2rem;
+}
+
+.eco-profile-header {
+  align-items: center;
+  display: flex;
+  margin-bottom: 2rem;
+}
+
+.eco-profile-avatar {
+  background-color: var(--soft-blue);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100px;
+  width: 100px;
+  margin-right: 1.5rem;
+}
+
+.eco-profile-info {
+  flex: 1;
+}
+
+.eco-profile-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.eco-profile-stats {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.eco-profile-stat {
+  text-align: center;
+}
+
+.eco-profile-stat-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.eco-profile-stat-label {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.eco-profile-edit {
+  margin-top: 1.5rem;
+}
+
+.eco-profile-edit-group {
+  margin-bottom: 1rem;
+}
+
+.eco-profile-edit-label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+/* Confetti Animation */
+.confetti {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  background-color: #f00;
+  opacity: 0;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .eco-hero {
+    flex-direction: column;
+    text-align: center;
+    gap: 2rem;
+  }
+  
+  .eco-hero-content {
+    max-width: 100%;
+  }
+  
+  .eco-nav {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .eco-badges-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .eco-profile-header {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .eco-profile-avatar {
+    margin-right: 0;
+    margin-bottom: 1rem;
+  }
+  
+  .eco-profile-stats {
+    justify-content: center;
+  }
+}
